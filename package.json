@@ -66,7 +66,6 @@
     "@darraghor/eslint-plugin-nestjs-typed": "^3.21.2",
     "@nestjs/schematics": "^9.2.0",
     "@nestjs/testing": "^9.4.2",
-    "@playwright/test": "^1.37.1",
     "@types/amqplib": "^0.10.1",
     "@types/cache-manager-ioredis": "^2.0.3",
     "@types/express": "^4.17.17",
