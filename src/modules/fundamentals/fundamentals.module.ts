@@ -1,6 +1,8 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
-const modules: DynamicModule[] = [];
+import { ProductItemsModule } from './product-items/product-items.module';
+
+const modules = [ProductItemsModule];
 
 @Module({
   imports: modules,

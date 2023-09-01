@@ -7,6 +7,8 @@ COPY *.json /opt/app/
 WORKDIR /opt/app/
 
 RUN npm ci
+ENV PLAYWRIGHT_BROWSERS_PATH="$HOME/pw-browsers"
+RUN npx playwright install
 COPY src /opt/app/src/
 RUN npm run build
 
@@ -31,6 +33,9 @@ RUN rm -rf tsconfig.build.json \
 
 USER nestjs
 
+ENV PLAYWRIGHT_BROWSERS_PATH="$HOME/pw-browsers"
+RUN npx playwright install
+
 ENTRYPOINT ["node", "/opt/app/build/src/main.js"]
 
 FROM node:18.16-alpine as development
@@ -46,7 +51,7 @@ COPY --from=base --chown=nestjs:nodejs /opt/app/node_modules ./node_modules
 RUN chown -R nestjs:nodejs /opt/app
 
 USER nestjs
-
+ENV PLAYWRIGHT_BROWSERS_PATH="$HOME/pw-browsers"
 RUN npx playwright install
 
 ENTRYPOINT ["npm", "run", "start:dev"]
