@@ -114,4 +114,23 @@ export class ConfigurationDto {
   @IsNotEmpty()
   @IsBooleanString()
   IS_RMQ_CONTROLLER_DISCOVERY: string;
+
+  /**
+   * FB config
+   */
+  @IsNotEmpty()
+  @IsString()
+  FB_BASE_URL: string;
+
+  @IsNotEmpty()
+  @IsString()
+  FB_MARKETPLACE_BASE_PATH: string;
+
+  @IsNotEmpty()
+  @IsString()
+  FB_USER_NAME: string;
+
+  @IsNotEmpty()
+  @IsString()
+  FB_USER_PASS: string;
 }
