@@ -3,9 +3,14 @@
 ## Install
 From project repository to initialize app with necessary configuration please run:
 ```bash
-$ npm run init
+$ npm run install
 ```
 this command will install all packages for your app
+
+After that we need to install playwright browsers
+```bash
+$ npx playwright install
+```
 
 ## Launch
 
