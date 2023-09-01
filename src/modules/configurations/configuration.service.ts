@@ -94,6 +94,10 @@ export class ConfigurationService {
           name: RmqExchangesEnum.TEST_EXCHANGE,
           type: RmqExchangeTypesEnum.TOPIC,
         },
+        {
+          name: RmqExchangesEnum.SCRAPING_EXCHANGE,
+          type: RmqExchangeTypesEnum.TOPIC,
+        },
       ],
       enableControllerDiscovery: convertStringToBoolean(this.get('IS_RMQ_CONTROLLER_DISCOVERY') || 'true'),
       connectionInitOptions: {

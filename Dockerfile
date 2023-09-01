@@ -47,4 +47,6 @@ RUN chown -R nestjs:nodejs /opt/app
 
 USER nestjs
 
+RUN npx playwright install
+
 ENTRYPOINT ["npm", "run", "start:dev"]

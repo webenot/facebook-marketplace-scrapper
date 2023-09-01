@@ -92,7 +92,7 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'error',
-    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@darraghor/nestjs-typed/provided-injected-should-match-factory-parameters': 'warn',
     'unicorn/better-regex': 'error',
     'unicorn/catch-error-name': 'error',
@@ -219,6 +219,6 @@ module.exports = {
     'import/no-absolute-path': 'error',
     'import/no-useless-path-segments': 'error',
     'import/newline-after-import': 'error',
-    'import/no-unresolved': 'warn',
+    'import/no-unresolved': 'off',
   },
 };

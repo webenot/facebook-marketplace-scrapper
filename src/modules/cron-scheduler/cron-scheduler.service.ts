@@ -5,7 +5,7 @@ import type { Queue } from 'bull';
 import { QueueProcessesEnum } from '~/providers/bull/enums/queue-processes.enum';
 import { QueueProcessorsEnum } from '~/providers/bull/enums/queue-processors.enum';
 
-import { CronExpressionsEnum } from './enums';
+import { CronExpressionsEnum, CronJobStatusEnum } from './enums';
 
 @Injectable()
 export class CronSchedulerService implements OnModuleInit {
@@ -13,12 +13,20 @@ export class CronSchedulerService implements OnModuleInit {
 
   public async onModuleInit(): Promise<void> {
     // TODO Add your cron tasks
-    await this.startTestJob();
+    // await this.startTestJob();
   }
 
   // Test cron job
   // TODO Remove it and add your own cron job
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private async startTestJob(): Promise<void> {
+    await this.testServiceQueue.clean(0, CronJobStatusEnum.ACTIVE);
+    await this.testServiceQueue.clean(0, CronJobStatusEnum.COMPLETED);
+    await this.testServiceQueue.clean(0, CronJobStatusEnum.WAIT);
+    await this.testServiceQueue.clean(0, CronJobStatusEnum.DELAYED);
+    await this.testServiceQueue.clean(0, CronJobStatusEnum.FAILED);
+    await this.testServiceQueue.clean(0, CronJobStatusEnum.PAUSED);
     await this.testServiceQueue.add(
       QueueProcessesEnum.TEST_CRON,
       { test: 'test' },
