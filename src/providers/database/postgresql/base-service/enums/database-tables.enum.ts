@@ -1,4 +1,3 @@
 export enum DatabaseTablesEnum {
-  USERS = 'users',
-  CLIENTS = 'clients',
+  PRODUCT_ITEMS = 'product_items',
 }
