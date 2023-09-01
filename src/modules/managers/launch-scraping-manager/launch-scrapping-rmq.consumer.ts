@@ -6,13 +6,14 @@ import type { Page } from 'playwright-core';
 import { LoggerService } from '~/logger/logger.service';
 import { ConfigurationService } from '~/modules/configurations/configuration.service';
 import { RmqExchangesEnum, RmqQueuesEnum, RmqRoutesEnum } from '~/providers/rmq/enums';
+import { RmqService } from '~/providers/rmq/rmq.service';
 
 @Injectable()
 export class LaunchScrappingRmqConsumer {
   private readonly logger: LoggerService;
   private readonly baseFbUrl: string;
 
-  constructor(private readonly configurationService: ConfigurationService) {
+  constructor(private readonly configurationService: ConfigurationService, private readonly rmqService: RmqService) {
     this.logger = new LoggerService(LaunchScrappingRmqConsumer.name);
     this.baseFbUrl = this.configurationService.get('FB_BASE_URL');
   }
@@ -24,7 +25,7 @@ export class LaunchScrappingRmqConsumer {
   })
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  private async scraping(@RabbitPayload() payload: { url: string; isList: boolean }): Promise<void> {
+  private async scraping(@RabbitPayload() payload: { url: string; isList: boolean; scanPages: number }): Promise<void> {
     this.logger.info(this.scraping.name, payload);
 
     try {
@@ -33,12 +34,15 @@ export class LaunchScrappingRmqConsumer {
       const page = await browser.newPage();
       await this.login(page);
       if (payload.isList) {
-        await this.scanList(payload.url, page, '.x139jcc6 .x1uepa24 .xjp7ctv .x1iyjqo2 .x3ct3a4 > a.x1lku1pv');
+        await this.scanList(
+          payload.url,
+          page,
+          '.x139jcc6 .x1uepa24 .xjp7ctv .x1iyjqo2 .x3ct3a4 > a.x1lku1pv',
+          payload.scanPages
+        );
       }
       await browser.close();
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
       this.logger.error(this.scraping.name, error);
     }
   }
@@ -55,28 +59,43 @@ export class LaunchScrappingRmqConsumer {
   private async scanList(url: string, page: Page, selector: string, pages = 10): Promise<void> {
     await page.goto(url);
     await page.waitForSelector(selector);
-    for (let i = 0; i < pages; i++) {
+    for (let index = 0; index < pages; index++) {
       await page.evaluate('window.scrollTo(0, document.body.scrollHeight);');
       await this.sleep(5000);
     }
     const locators = page.locator(selector);
-    this.logger.info(this.scanList.name, { locators });
-    const elCount = await locators.count();
-    this.logger.info(this.scanList.name, { elCount });
+    const elementCount = await locators.count();
     const entries = [];
-    const hrefs = [];
 
-    for (let index = 0; index < elCount; index++) {
+    for (let index = 0; index < elementCount; index++) {
       const element = await locators.nth(index);
-      const innerText = await element.innerText();
-      const href = await element.getAttribute('href');
+      const innerElements = await element.locator('.x1gslohp.xkh6y0r');
+      const title = await (await innerElements.nth(1)).innerText();
+      const price = await (await innerElements.nth(0)).innerText();
+      const location = await (await innerElements.nth(2)).innerText();
+      const link = await element.getAttribute('href');
+      const linkSplitted = link?.split('/') || [];
+      const idIndex = linkSplitted.indexOf('item') + 1;
+      const image = await element.locator('img');
+      const imageUrl = await image.getAttribute('src');
 
-      entries.push(innerText);
-      hrefs.push(href);
+      if (!title) continue;
+
+      const productItem = {
+        title,
+        price,
+        location,
+        link,
+        fbId: linkSplitted[idIndex],
+        imageUrl,
+      };
+
+      await this.rmqService.publish(RmqExchangesEnum.PRODUCTS_EXCHANGE, RmqRoutesEnum.SAVE_PRODUCT_ITEM, productItem);
+
+      entries.push(productItem);
     }
 
     this.logger.info(this.scanList.name, { entries });
-    this.logger.info(this.scanList.name, { hrefs });
   }
 
   private async sleep(ms: number): Promise<void> {

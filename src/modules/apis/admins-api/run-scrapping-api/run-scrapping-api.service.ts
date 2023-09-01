@@ -4,13 +4,19 @@ import { ConfigurationService } from '~/modules/configurations/configuration.ser
 import { RmqExchangesEnum, RmqRoutesEnum } from '~/providers/rmq/enums';
 import { RmqService } from '~/providers/rmq/rmq.service';
 
+import type { RunFbScrappingRequestDto } from './dtos';
+
 @Injectable()
 export class AdminRunScrappingApiService {
   constructor(private readonly configurationService: ConfigurationService, private readonly rmqService: RmqService) {}
 
-  public async runScraping(path: string, isList: boolean): Promise<void> {
+  public async runScraping({ path, isList, scanPages }: RunFbScrappingRequestDto): Promise<void> {
     const url =
       this.configurationService.get('FB_BASE_URL') + this.configurationService.get('FB_MARKETPLACE_BASE_PATH') + path;
-    await this.rmqService.publish(RmqExchangesEnum.SCRAPING_EXCHANGE, RmqRoutesEnum.SCRAPING_LIST, { url, isList });
+    await this.rmqService.publish(RmqExchangesEnum.SCRAPING_EXCHANGE, RmqRoutesEnum.SCRAPING_LIST, {
+      url,
+      isList,
+      scanPages,
+    });
   }
 }

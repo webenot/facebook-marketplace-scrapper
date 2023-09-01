@@ -1,9 +1,10 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, Unique } from 'typeorm';
 
 import { BaseEntity } from '~/modules/fundamentals/base/base.entity';
 import { DatabaseTablesEnum } from '~/providers/database/postgresql/base-service/enums';
 
 @Entity({ name: DatabaseTablesEnum.PRODUCT_ITEMS })
+@Unique(['fbId'])
 export class ProductItem extends BaseEntity {
   @Column()
   title: string;

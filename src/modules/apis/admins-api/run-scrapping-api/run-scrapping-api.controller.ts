@@ -1,6 +1,7 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+import { RunFbScrappingRequestDto } from '~/modules/apis/admins-api/run-scrapping-api/dtos';
 import { BaseResponseDto } from '~/modules/utils/dto/base-response.dto';
 import { ResponseMessagesEnum } from '~/modules/utils/enums';
 
@@ -25,8 +26,8 @@ export class AdminRunScrappingApiController {
     type: BaseResponseDto,
     isArray: true,
   })
-  async runScraping(@Body() payload: { path: string; isList: boolean }): Promise<BaseResponseDto> {
-    this.runScrappingApiService.runScraping(payload.path, payload.isList);
+  async runScraping(@Body() payload: RunFbScrappingRequestDto): Promise<BaseResponseDto> {
+    this.runScrappingApiService.runScraping(payload);
     return {
       message: 'Scraping started',
     };
