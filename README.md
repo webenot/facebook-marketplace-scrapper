@@ -14,6 +14,9 @@ $ npx playwright install
 
 ## Launch
 
+### Launch issues
+System does not work in Docker container. Please run API server outside docker
+
 ### Using of docker-compose for local deployment (recommended)
 
 Launch it from root directory
