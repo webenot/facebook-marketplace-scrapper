@@ -3,7 +3,7 @@
 ## Install
 From project repository to initialize app with necessary configuration please run:
 ```bash
-$ npm run install
+$ npm install
 ```
 this command will install all packages for your app
 
